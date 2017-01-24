@@ -228,7 +228,7 @@ execute_build() {
     ARCH_OUT="out_android_${ARCH}"
 
     echo Generate projects using GN
-    gn gen "$ARCH_OUT/$BUILD_TYPE" --args="$DEBUG_ARG symbol_level=1 target_os=\"android\" target_cpu=\"${ARCH}\""
+    gn gen "$ARCH_OUT/$BUILD_TYPE" --args="$DEBUG_ARG symbol_level=1 target_os=\"android\" target_cpu=\"${ARCH}\" $USER_ARGS"
     #gclient runhooks
 
     REVISION_NUM=`get_webrtc_revision`
