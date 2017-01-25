@@ -258,16 +258,25 @@ function build_webrtc_mac() {
       copy_headers
 
       GN_ARGS='target_os="mac" target_cpu="x64" is_component_build=false'
+      WORKING_DIR=''
       WEBRTC_REVISION=`get_revision_number`
       if [ "$WEBRTC_DEBUG" = true ] ; then
-          gn gen out_mac_x86_64/Debug --args="$GN_ARGS is_debug=true"
-          exec_ninja "out_mac_x86_64/Debug/"
+          WORKING_DIR="out_mac_x86_64/Debug"
+          GN_ARGS="$GN_ARGS is_debug=true"
       fi
 
       if [ "$WEBRTC_RELEASE" = true ] ; then
-          gn gen out_mac_x86_64/Release --args="$GN_ARGS is_debug=false"
-          exec_ninja "out_mac_x86_64/Release/"
+          WORKING_DIR="out_mac_x86_64/Release"
+          GN_ARGS="$GN_ARGS is_debug=false"
       fi
+
+      if [ "$WEBRTC_REBUILD" = true ] ; then
+            gn clean $WORKING_DIR
+      fi 
+
+      gn gen $WORKING_DIR --args="$GN_ARGS"
+      exec_ninja $WORKING_DIR
+
     else
       echo "Change the OSX Target by changing the MAC_SDK environment variable to 10.9. There is a bug with building mac target 10.10 (it assumes its 10.1 and lower than 10.8)"
       echo "---------- OR ----------"
@@ -294,21 +303,29 @@ function build_apprtc_sim() {
     copy_headers
 
     GN_ARGS="target_os=\"ios\" target_cpu=\"ia32\" is_component_build=false $GN_ARGS"
+    WORKING_DIR=''
     WEBRTC_REVISION=`get_revision_number`
     if [ "$WEBRTC_DEBUG" = true ] ; then
-        gn gen out_ios_x86/Debug-iphonesimulator --args="$GN_ARGS is_debug=true"
-        exec_ninja "out_ios_x86/Debug-iphonesimulator/"
+        WORKING_DIR="out_ios_x86/Debug-iphonesimulator"
+        GN_ARGS="$GN_ARGS is_debug=true"
     fi
 
     if [ "$WEBRTC_PROFILE" = true ] ; then
-        gn gen out_ios_x86/Profile-iphonesimulator --args="$GN_ARGS is_debug=true"
-        exec_ninja "out_ios_x86/Profile-iphonesimulator/"
+        WORKING_DIR="out_ios_x86/Profile-iphonesimulator"
+        GN_ARGS="$GN_ARGS is_debug=true"
     fi
 
     if [ "$WEBRTC_RELEASE" = true ] ; then
-        gn gen out_ios_x86/Release-iphonesimulator --args="$GN_ARGS is_debug=false"
-        exec_ninja "out_ios_x86/Release-iphonesimulator/"
+        WORKING_DIR="out_ios_x86/Release-iphonesimulator"
+        GN_ARGS="$GN_ARGS is_debug=false"
     fi
+
+    if [ "$WEBRTC_REBUILD" = true ] ; then
+            gn clean $WORKING_DIR
+    fi 
+
+    gn gen $WORKING_DIR --args="$GN_ARGS"
+    exec_ninja $WORKING_DIR
 }
 
 # Build AppRTC Demo for the 64 bit simulator (x86_64 architecture)
@@ -327,21 +344,29 @@ function build_apprtc_sim64() {
     copy_headers
 
     GN_ARGS="target_os=\"ios\" target_cpu=\"x64\" is_component_build=false $GN_ARGS"
+    WORKING_DIR=''
     WEBRTC_REVISION=`get_revision_number`
     if [ "$WEBRTC_DEBUG" = true ] ; then
-        gn gen out_ios_x86_64/Debug-iphonesimulator --args="$GN_ARGS is_debug=true"
-        exec_ninja "out_ios_x86_64/Debug-iphonesimulator/"
+        WORKING_DIR="out_ios_x86_64/Debug-iphonesimulator"
+        GN_ARGS="$GN_ARGS is_debug=true"
     fi
 
     if [ "$WEBRTC_PROFILE" = true ] ; then
-        gn gen out_ios_x86_64/Profile-iphonesimulator --args="$GN_ARGS is_debug=true"
-        exec_ninja "out_ios_x86_64/Profile-iphonesimulator/"
+        WORKING_DIR="out_ios_x86_64/Profile-iphonesimulator"
+        GN_ARGS="$GN_ARGS is_debug=true"
     fi
 
     if [ "$WEBRTC_RELEASE" = true ] ; then
-        gn gen out_ios_x86_64/Release-iphonesimulator --args="$GN_ARGS is_debug=false"
-        exec_ninja "out_ios_x86_64/Release-iphonesimulator/"
+        WORKING_DIR="out_ios_x86_64/Release-iphonesimulator"
+        GN_ARGS="$GN_ARGS is_debug=false"
     fi
+
+    if [ "$WEBRTC_REBUILD" = true ] ; then
+            gn clean $WORKING_DIR
+    fi 
+
+    gn gen $WORKING_DIR --args="$GN_ARGS"
+    exec_ninja $WORKING_DIR
 }
 
 # Build AppRTC Demo for a real device
@@ -360,21 +385,29 @@ function build_apprtc() {
     copy_headers
 
     GN_ARGS="target_os=\"ios\" target_cpu=\"arm\" is_component_build=false $GN_ARGS"
+    WORKING_DIR=''
     WEBRTC_REVISION=`get_revision_number`
     if [ "$WEBRTC_DEBUG" = true ] ; then
-        gn gen out_ios_armeabi_v7a/Debug-iphoneos --args="$GN_ARGS is_debug=true"
-        exec_ninja "out_ios_armeabi_v7a/Debug-iphoneos/"
+        WORKING_DIR="out_ios_armeabi_v7a/Debug-iphoneos"
+        GN_ARGS="$GN_ARGS is_debug=true"
     fi
 
     if [ "$WEBRTC_PROFILE" = true ] ; then
-        gn gen out_ios_armeabi_v7a/Profile-iphoneos --args="$GN_ARGS is_debug=true"
-        exec_ninja "out_ios_armeabi_v7a/Profile-iphoneos/"
+        WORKING_DIR="out_ios_armeabi_v7a/Profile-iphoneos"
+        GN_ARGS="$GN_ARGS is_debug=true"
     fi
 
     if [ "$WEBRTC_RELEASE" = true ] ; then
-        gn gen out_ios_armeabi_v7a/Release-iphoneos --args="$GN_ARGS is_debug=false"
-        exec_ninja "out_ios_armeabi_v7a/Release-iphoneos/"
+        WORKING_DIR="out_ios_armeabi_v7a/Release-iphoneos"
+        GN_ARGS="$GN_ARGS is_debug=false"
     fi
+
+    if [ "$WEBRTC_REBUILD" = true ] ; then
+            gn clean $WORKING_DIR
+    fi 
+
+    gn gen $WORKING_DIR --args="$GN_ARGS"
+    exec_ninja $WORKING_DIR
 }
 
 
@@ -394,21 +427,29 @@ function build_apprtc_arm64() {
     copy_headers
 
     GN_ARGS="target_os=\"ios\" target_cpu=\"arm64\" is_component_build=false $GN_ARGS"
+    WORKING_DIR=''
     WEBRTC_REVISION=`get_revision_number`
     if [ "$WEBRTC_DEBUG" = true ] ; then
-        gn gen out_ios_arm64_v8a/Debug-iphoneos --args="$GN_ARGS is_debug=true"
-        exec_ninja "out_ios_arm64_v8a/Debug-iphoneos/"
+        WORKING_DIR="out_ios_arm64_v8a/Debug-iphoneos"
+        GN_ARGS="$GN_ARGS is_debug=true"
     fi
 
     if [ "$WEBRTC_PROFILE" = true ] ; then
-        gn gen out_ios_arm64_v8a/Profile-iphoneos --args="$GN_ARGS is_debug=true"
-        exec_ninja "out_ios_arm64_v8a/Profile-iphoneos/"
+        WORKING_DIR="out_ios_arm64_v8a/Profile-iphoneos"
+        GN_ARGS="$GN_ARGS is_debug=true"
     fi
 
     if [ "$WEBRTC_RELEASE" = true ] ; then
-        gn gen out_ios_arm64_v8a/Release-iphoneos --args="$GN_ARGS is_debug=false"
-        exec_ninja "out_ios_arm64_v8a/Release-iphoneos/"
+        WORKING_DIR="out_ios_arm64_v8a/Release-iphoneos"
+        GN_ARGS="$GN_ARGS is_debug=false"
     fi
+
+    if [ "$WEBRTC_REBUILD" = true ] ; then
+            gn clean $WORKING_DIR
+    fi 
+
+    gn gen $WORKING_DIR --args="$GN_ARGS"
+    exec_ninja $WORKING_DIR
 }
 
 # This function is used to put together the intel (simulator), armv7 and arm64 builds (device) into one static library so its easy to deal with in Xcode
