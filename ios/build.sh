@@ -40,6 +40,12 @@ function exec_ninja() {
   ninja -C $1 $WEBRTC_TARGET
 }
 
+function clean() {
+    echo "Cleaning $1"
+    gn clean $1
+    echo "Cleaned."
+}
+
 create_directory_if_not_found "$PROJECT_DIR"
 create_directory_if_not_found "$WEBRTC"
 
@@ -271,7 +277,7 @@ function build_webrtc_mac() {
       fi
 
       if [ "$WEBRTC_REBUILD" = true ] ; then
-            gn clean $WORKING_DIR
+            clean $WORKING_DIR
       fi 
 
       gn gen $WORKING_DIR --args="$GN_ARGS"
@@ -286,6 +292,8 @@ function build_webrtc_mac() {
       exit 1
     fi
 }
+
+
 
 # Build AppRTC Demo for the simulator (ia32 architecture)
 function build_apprtc_sim() {
@@ -321,7 +329,7 @@ function build_apprtc_sim() {
     fi
 
     if [ "$WEBRTC_REBUILD" = true ] ; then
-            gn clean $WORKING_DIR
+            clean $WORKING_DIR
     fi 
 
     gn gen $WORKING_DIR --args="$GN_ARGS"
@@ -362,7 +370,7 @@ function build_apprtc_sim64() {
     fi
 
     if [ "$WEBRTC_REBUILD" = true ] ; then
-            gn clean $WORKING_DIR
+            clean $WORKING_DIR
     fi 
 
     gn gen $WORKING_DIR --args="$GN_ARGS"
@@ -403,7 +411,7 @@ function build_apprtc() {
     fi
 
     if [ "$WEBRTC_REBUILD" = true ] ; then
-            gn clean $WORKING_DIR
+            clean $WORKING_DIR
     fi 
 
     gn gen $WORKING_DIR --args="$GN_ARGS"
@@ -445,7 +453,7 @@ function build_apprtc_arm64() {
     fi
 
     if [ "$WEBRTC_REBUILD" = true ] ; then
-            gn clean $WORKING_DIR
+            clean $WORKING_DIR
     fi 
 
     gn gen $WORKING_DIR --args="$GN_ARGS"
