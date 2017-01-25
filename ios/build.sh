@@ -82,7 +82,7 @@ function pull_depot_tools() {
 }
 
 function choose_code_signing() {
-    if [ "$WEBRTC_TARGET" == "AppRTCDemo" ]; then
+    if [ "$WEBRTC_TARGET" == "AppRTCDemo" -o "$WEBRTC_TARGET" == "rtc_sdk_framework_objc"]; then
         echo "AppRTCDemo target requires code signing since we are building an *.ipa"
         if [[ -z $IDENTITY ]]
         then
@@ -105,7 +105,7 @@ function choose_code_signing() {
 # Set the base of the GYP defines, instructing gclient runhooks what to generate
 function wrbase() {
 	export GYP_CROSSCOMPILE=1
-    if [ "$WEBRTC_TARGET" != "AppRTCDemo" ]; then
+    if [ "$WEBRTC_TARGET" != "AppRTCDemo" -a "$WEBRTC_TARGET" != "rtc_sdk_framework_objc"]; then
         GYP_DEFINES="chromium_ios_signing=0"
     fi
     export GYP_GENERATORS="ninja,xcode-ninja"
@@ -216,10 +216,6 @@ function update2Revision() {
         sync "$1"
     fi
 
-    # Inject the new libWebRTC_objc target magic
-    if [ "$WEBRTC_TARGET" == "libWebRTC_objc" ] ; then
-        twiddle_objc_target
-    fi
     echo "-- webrtc has been successfully updated"
 }
 
@@ -240,36 +236,11 @@ function sync() {
     cd "$WEBRTC"
     choose_code_signing
 
-    if [ "$WEBRTC_TARGET" == "libWebRTC_objc" ] ; then
-        twiddle_objc_target
-      else
-        untwiddle_objc_target
-    fi
-
     if [ -z $1 ]
     then
         gclient sync --with_branch_heads || true
     else
         gclient sync -r "$1" --with_branch_heads || true
-    fi
-}
-
-# Functions to twiddle the libWebRTC_objc target so that we can build the files that we need and exclude socket rocket and such
-function twiddle_objc_target () {
-    cd "$WEBRTC"
-    echo "Adding a new libWebRTC_objc target"
-    echo "$PROJECT_DIR/insert_two_lines_after_text.py"
-    python "$PROJECT_DIR/insert_two_lines_after_text.py"  "$WEBRTC/src/webrtc/webrtc_examples.gyp"
-}
-
-function untwiddle_objc_target () {
-    cd "$WEBRTC/src"
-
-    file_changed=`git status --porcelain webrtc/webrtc_examples.gyp | awk '/^ M/{ print $2 }'`
-
-    if [ "$file_changed" == "webrtc/webrtc_examples.gyp" ] ; then
-        echo "Untwiddling the libWebRTC_objc target"
-        git checkout -- webrtc/webrtc_examples.gyp
     fi
 }
 
@@ -290,7 +261,9 @@ function build_webrtc_mac() {
       wrMac64
       export MACOSX_DEPLOYMENT_TARGET="$MAC_SDK"
 
-      choose_code_signing
+      if [ "$WEBRTC_IOS_SIGN" = true ] ; then
+            choose_code_signing
+      fi
 
       copy_headers
 
@@ -323,11 +296,17 @@ function build_apprtc_sim() {
     cd "$WEBRTC/src"
 
     wrX86
-    choose_code_signing
+
+    GN_ARGS=''
+    if [ "$WEBRTC_IOS_SIGN" = true ] ; then
+            choose_code_signing
+    else
+        GN_ARGS='ios_enable_code_signing=false'
+    fi
 
     copy_headers
 
-    GN_ARGS='target_os="ios" target_cpu="ia32" is_component_build=false'
+    GN_ARGS="target_os=\"ios\" target_cpu=\"ia32\" is_component_build=false $GN_ARGS"
     WEBRTC_REVISION=`get_revision_number`
     if [ "$WEBRTC_DEBUG" = true ] ; then
         gn gen out_ios_x86/Debug-iphonesimulator --args="$GN_ARGS is_debug=true"
@@ -354,12 +333,17 @@ function build_apprtc_sim64() {
     cd "$WEBRTC/src"
 
     wrX86_64
-    choose_code_signing
-    
+        
+    GN_ARGS=''
+    if [ "$WEBRTC_IOS_SIGN" = true ] ; then
+            choose_code_signing
+    else
+        GN_ARGS='ios_enable_code_signing=false'
+    fi
 
     copy_headers
 
-    GN_ARGS='target_os="ios" target_cpu="x64" is_component_build=false'
+    GN_ARGS="target_os=\"ios\" target_cpu=\"x64\" is_component_build=false $GN_ARGS"
     WEBRTC_REVISION=`get_revision_number`
     if [ "$WEBRTC_DEBUG" = true ] ; then
         gn gen out_ios_x86_64/Debug-iphonesimulator --args="$GN_ARGS is_debug=true"
@@ -386,13 +370,17 @@ function build_apprtc() {
     cd "$WEBRTC/src"
 
     wrios_armv7
-    choose_code_signing
-    #gclient runhooks
 
+    GN_ARGS=''
+    if [ "$WEBRTC_IOS_SIGN" = true ] ; then
+            choose_code_signing
+    else
+        GN_ARGS='ios_enable_code_signing=false'
+    fi
 
     copy_headers
 
-    GN_ARGS='target_os="ios" target_cpu="arm" is_component_build=false'
+    GN_ARGS="target_os=\"ios\" target_cpu=\"arm\" is_component_build=false $GN_ARGS"
     WEBRTC_REVISION=`get_revision_number`
     if [ "$WEBRTC_DEBUG" = true ] ; then
         gn gen out_ios_armeabi_v7a/Debug-iphoneos --args="$GN_ARGS is_debug=true"
@@ -420,11 +408,17 @@ function build_apprtc_arm64() {
     cd "$WEBRTC/src"
 
     wrios_armv8
-    choose_code_signing
+    
+    GN_ARGS=''
+    if [ "$WEBRTC_IOS_SIGN" = true ] ; then
+            choose_code_signing
+    else
+        GN_ARGS='ios_enable_code_signing=false'
+    fi
 
     copy_headers
 
-    GN_ARGS='target_os="ios" target_cpu="arm64" is_component_build=false'
+    GN_ARGS="target_os=\"ios\" target_cpu=\"arm64\" is_component_build=false $GN_ARGS"
     WEBRTC_REVISION=`get_revision_number`
     if [ "$WEBRTC_DEBUG" = true ] ; then
         gn gen out_ios_arm64_v8a/Debug-iphoneos --args="$GN_ARGS is_debug=true"
