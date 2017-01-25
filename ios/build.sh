@@ -35,16 +35,6 @@ function install_dependencies()
     sudo apt install libtool-bin
 }
 
-function exec_libtool() {
-  echo "Running libtool"
-  libtool -static -v -o $@
-}
-
-function exec_strip() {
-  echo "Running strip"
-  strip -S -X $@
-}
-
 function exec_ninja() {
   echo "Running ninja"
   ninja -C $1 $WEBRTC_TARGET
@@ -266,21 +256,17 @@ function build_webrtc_mac() {
       fi
 
       copy_headers
-      shopt -s globstar
 
       GN_ARGS='target_os="mac" target_cpu="x64" is_component_build=false'
       WEBRTC_REVISION=`get_revision_number`
       if [ "$WEBRTC_DEBUG" = true ] ; then
           gn gen out_mac_x86_64/Debug --args="$GN_ARGS is_debug=true"
           exec_ninja "out_mac_x86_64/Debug/"
-          exec_libtool "$BUILD/libWebRTC-$WEBRTC_REVISION-mac-x86_64-Debug.a" "$WEBRTC"/src/out_mac_x86_64/Debug/**/*.a
       fi
 
       if [ "$WEBRTC_RELEASE" = true ] ; then
           gn gen out_mac_x86_64/Release --args="$GN_ARGS is_debug=false"
           exec_ninja "out_mac_x86_64/Release/"
-          exec_libtool "$BUILD/libWebRTC-$WEBRTC_REVISION-mac-x86_64-Release.a" "$WEBRTC"/src/out_mac_x86_64/Release/**/*.a
-          exec_strip "$BUILD/libWebRTC-$WEBRTC_REVISION-mac-x86_64-Release.a"
       fi
     else
       echo "Change the OSX Target by changing the MAC_SDK environment variable to 10.9. There is a bug with building mac target 10.10 (it assumes its 10.1 and lower than 10.8)"
@@ -306,27 +292,22 @@ function build_apprtc_sim() {
     fi
 
     copy_headers
-    shopt -s globstar
 
     GN_ARGS="target_os=\"ios\" target_cpu=\"ia32\" is_component_build=false $GN_ARGS"
     WEBRTC_REVISION=`get_revision_number`
     if [ "$WEBRTC_DEBUG" = true ] ; then
         gn gen out_ios_x86/Debug-iphonesimulator --args="$GN_ARGS is_debug=true"
         exec_ninja "out_ios_x86/Debug-iphonesimulator/"
-        exec_libtool "$BUILD/libWebRTC-$WEBRTC_REVISION-ios-x86-Debug.a" "$WEBRTC"/src/out_ios_x86/Debug-iphonesimulator/**/*.a
     fi
 
     if [ "$WEBRTC_PROFILE" = true ] ; then
         gn gen out_ios_x86/Profile-iphonesimulator --args="$GN_ARGS is_debug=true"
         exec_ninja "out_ios_x86/Profile-iphonesimulator/"
-        exec_libtool "$BUILD/libWebRTC-$WEBRTC_REVISION-ios-x86-Profile.a" "$WEBRTC"/src/out_ios_x86/Profile-iphonesimulator/**/*.a
     fi
 
     if [ "$WEBRTC_RELEASE" = true ] ; then
         gn gen out_ios_x86/Release-iphonesimulator --args="$GN_ARGS is_debug=false"
         exec_ninja "out_ios_x86/Release-iphonesimulator/"
-        exec_libtool "$BUILD/libWebRTC-$WEBRTC_REVISION-ios-x86-Release.a" "$WEBRTC"/src/out_ios_x86/Release-iphonesimulator/**/*.a
-        exec_strip "$BUILD/libWebRTC-$WEBRTC_REVISION-ios-x86-Release.a"
     fi
 }
 
@@ -344,27 +325,22 @@ function build_apprtc_sim64() {
     fi
 
     copy_headers
-    shopt -s globstar
 
     GN_ARGS="target_os=\"ios\" target_cpu=\"x64\" is_component_build=false $GN_ARGS"
     WEBRTC_REVISION=`get_revision_number`
     if [ "$WEBRTC_DEBUG" = true ] ; then
         gn gen out_ios_x86_64/Debug-iphonesimulator --args="$GN_ARGS is_debug=true"
         exec_ninja "out_ios_x86_64/Debug-iphonesimulator/"
-        exec_libtool "$BUILD/libWebRTC-$WEBRTC_REVISION-ios-x86_64-Debug.a" "$WEBRTC"/src/out_ios_x86_64/Debug-iphonesimulator/**/*.a
     fi
 
     if [ "$WEBRTC_PROFILE" = true ] ; then
         gn gen out_ios_x86_64/Profile-iphonesimulator --args="$GN_ARGS is_debug=true"
         exec_ninja "out_ios_x86_64/Profile-iphonesimulator/"
-        exec_libtool "$BUILD/libWebRTC-$WEBRTC_REVISION-ios-x86_64-Profile.a" "$WEBRTC"/src/out_ios_x86_64/Profile-iphonesimulator/**/*.a
     fi
 
     if [ "$WEBRTC_RELEASE" = true ] ; then
         gn gen out_ios_x86_64/Release-iphonesimulator --args="$GN_ARGS is_debug=false"
         exec_ninja "out_ios_x86_64/Release-iphonesimulator/"
-        exec_libtool "$BUILD/libWebRTC-$WEBRTC_REVISION-ios-x86_64-Release.a" "$WEBRTC"/src/out_ios_x86_64/Release-iphonesimulator/**/*.a
-        exec_strip "$BUILD/libWebRTC-$WEBRTC_REVISION-ios-x86_64-Release.a"
     fi
 }
 
@@ -382,27 +358,22 @@ function build_apprtc() {
     fi
 
     copy_headers
-    shopt -s globstar
 
     GN_ARGS="target_os=\"ios\" target_cpu=\"arm\" is_component_build=false $GN_ARGS"
     WEBRTC_REVISION=`get_revision_number`
     if [ "$WEBRTC_DEBUG" = true ] ; then
         gn gen out_ios_armeabi_v7a/Debug-iphoneos --args="$GN_ARGS is_debug=true"
         exec_ninja "out_ios_armeabi_v7a/Debug-iphoneos/"
-        exec_libtool "$BUILD/libWebRTC-$WEBRTC_REVISION-ios-armeabi_v7a-Debug.a" "$WEBRTC"/src/out_ios_armeabi_v7a/Debug-iphoneos/**/*.a
     fi
 
     if [ "$WEBRTC_PROFILE" = true ] ; then
         gn gen out_ios_armeabi_v7a/Profile-iphoneos --args="$GN_ARGS is_debug=true"
         exec_ninja "out_ios_armeabi_v7a/Profile-iphoneos/"
-        exec_libtool "$BUILD/libWebRTC-$WEBRTC_REVISION-ios-armeabi_v7a-Profile.a" "$WEBRTC"/src/out_ios_armeabi_v7a/Profile-iphoneos/**/*.a
     fi
 
     if [ "$WEBRTC_RELEASE" = true ] ; then
         gn gen out_ios_armeabi_v7a/Release-iphoneos --args="$GN_ARGS is_debug=false"
         exec_ninja "out_ios_armeabi_v7a/Release-iphoneos/"
-        exec_libtool "$BUILD/libWebRTC-$WEBRTC_REVISION-ios-armeabi_v7a-Release.a" "$WEBRTC"/src/out_ios_armeabi_v7a/Release-iphoneos/**/*.a
-        exec_strip "$BUILD/libWebRTC-$WEBRTC_REVISION-ios-armeabi_v7a-Release.a"
     fi
 }
 
@@ -421,27 +392,22 @@ function build_apprtc_arm64() {
     fi
 
     copy_headers
-    shopt -s globstar
 
     GN_ARGS="target_os=\"ios\" target_cpu=\"arm64\" is_component_build=false $GN_ARGS"
     WEBRTC_REVISION=`get_revision_number`
     if [ "$WEBRTC_DEBUG" = true ] ; then
         gn gen out_ios_arm64_v8a/Debug-iphoneos --args="$GN_ARGS is_debug=true"
         exec_ninja "out_ios_arm64_v8a/Debug-iphoneos/"
-        exec_libtool "$BUILD/libWebRTC-$WEBRTC_REVISION-ios-arm64_v8a-Debug.a" "$WEBRTC"/src/out_ios_arm64_v8a/Debug-iphoneos/**/*.a
     fi
 
     if [ "$WEBRTC_PROFILE" = true ] ; then
         gn gen out_ios_arm64_v8a/Profile-iphoneos --args="$GN_ARGS is_debug=true"
         exec_ninja "out_ios_arm64_v8a/Profile-iphoneos/"
-        exec_libtool "$BUILD/libWebRTC-$WEBRTC_REVISION-ios-arm64_v8a-Profile.a" "$WEBRTC"/src/out_ios_arm64_v8a/Profile-iphoneos/**/*.a
     fi
 
     if [ "$WEBRTC_RELEASE" = true ] ; then
         gn gen out_ios_arm64_v8a/Release-iphoneos --args="$GN_ARGS is_debug=false"
         exec_ninja "out_ios_arm64_v8a/Release-iphoneos/"
-        exec_libtool "$BUILD/libWebRTC-$WEBRTC_REVISION-ios-arm64_v8a-Release.a" "$WEBRTC"/src/out_ios_arm64_v8a/Release-iphoneos/**/*.a
-        exec_strip "$BUILD/libWebRTC-$WEBRTC_REVISION-ios-arm64_v8a-Release.a"
     fi
 }
 
@@ -514,7 +480,7 @@ function build_webrtc() {
     build_apprtc_arm64
     build_apprtc_sim
     build_apprtc_sim64
-    lipo_intel_and_arm
+    #lipo_intel_and_arm
 }
 
 # Create the static library, requires an argument specifiying Debug or Release
@@ -616,26 +582,6 @@ function create_ios_framework() {
     if [ "$WEBRTC_RELEASE" = true ] ; then
         create_ios_framework_for_configuration "Release"
     fi
-}
-
-function create_ios_framework_for_configuration () {
-    CONFIGURATION=$1
-
-    rm -rf "$WEBRTC/Framework/$CONFIGURATION/WebRTC.framework"
-    mkdir -p "$WEBRTC/Framework/$CONFIGURATION/WebRTC.framework/Versions/A/Headers"
-    cp "$WEBRTC"/src/talk/app/webrtc/objc/public/*.h "$WEBRTC/Framework/$CONFIGURATION/WebRTC.framework/Versions/A/Headers"
-    cp "$WEBRTC/libWebRTC-LATEST-Universal-$CONFIGURATION.a" "$WEBRTC/Framework/$CONFIGURATION/WebRTC.framework/Versions/A/WebRTC"
-
-    WEBRTC_REVISION=`get_revision_number`
-    echo $WEBRTC_REVISION >> "$WEBRTC/Framework/$CONFIGURATION/WebRTC.framework/Version.txt"
-
-    pushd "$WEBRTC/Framework/$CONFIGURATION/WebRTC.framework/Versions"
-    ln -sfh A Current
-    popd
-    pushd "$WEBRTC/Framework/$CONFIGURATION/WebRTC.framework"
-    ln -sfh Versions/Current/Headers Headers
-    ln -sfh Versions/Current/WebRTC WebRTC
-    popd
 }
 
 # Get webrtc then build webrtc
