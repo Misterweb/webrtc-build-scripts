@@ -82,7 +82,7 @@ function pull_depot_tools() {
 }
 
 function choose_code_signing() {
-    if [ "$WEBRTC_TARGET" == "AppRTCDemo" -o "$WEBRTC_TARGET" == "rtc_sdk_framework_objc"]; then
+    if [ "$WEBRTC_TARGET" == "AppRTCDemo" -o "$WEBRTC_TARGET" == "rtc_sdk_framework_objc" ]; then
         echo "AppRTCDemo target requires code signing since we are building an *.ipa"
         if [[ -z $IDENTITY ]]
         then
@@ -98,14 +98,14 @@ function choose_code_signing() {
             fi
             echo Using code signing identity $IDENTITY
         fi
-        sed -i -e "s/\'CODE_SIGN_IDENTITY\[sdk=iphoneos\*\]\': \'iPhone Developer\',/\'CODE_SIGN_IDENTITY[sdk=iphoneos*]\': \'$IDENTITY\',/" $WEBRTC/src/build/common.gypi
+        #sed -i -e "s/\'CODE_SIGN_IDENTITY\[sdk=iphoneos\*\]\': \'iPhone Developer\',/\'CODE_SIGN_IDENTITY[sdk=iphoneos*]\': \'$IDENTITY\',/" $WEBRTC/src/build/common.gypi
     fi
 }
 
 # Set the base of the GYP defines, instructing gclient runhooks what to generate
 function wrbase() {
 	export GYP_CROSSCOMPILE=1
-    if [ "$WEBRTC_TARGET" != "AppRTCDemo" -a "$WEBRTC_TARGET" != "rtc_sdk_framework_objc"]; then
+    if [ "$WEBRTC_TARGET" != "AppRTCDemo" ] && [ "$WEBRTC_TARGET" != "rtc_sdk_framework_objc" ]; then
         GYP_DEFINES="chromium_ios_signing=0"
     fi
     export GYP_GENERATORS="ninja,xcode-ninja"
