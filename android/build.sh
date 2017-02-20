@@ -109,7 +109,7 @@ pull_webrtc() {
         gclient sync
     else
         echo "gclient sync with $1"
-        gclient sync --force --revision src@$1
+        gclient sync --revision "src@$1" --with_branch_heads
     fi
 
     # Navigate back
