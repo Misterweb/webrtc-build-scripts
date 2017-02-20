@@ -236,7 +236,7 @@ function sync() {
     then
         gclient sync --with_branch_heads || true
     else
-        gclient sync -r "$1" --with_branch_heads || true
+        gclient sync --force --revision "src@$1" --with_branch_heads || true
     fi
 }
 
