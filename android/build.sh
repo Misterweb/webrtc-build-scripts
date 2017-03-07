@@ -31,7 +31,7 @@ DEPOT_TOOLS="$PROJECT_ROOT/depot_tools"
 WEBRTC_ROOT="$PROJECT_ROOT/webrtc"
 create_directory_if_not_found "$WEBRTC_ROOT"
 BUILD="$WEBRTC_ROOT/libjingle_peerconnection_builds"
-WEBRTC_TARGET="AppRTCDemo"
+WEBRTC_TARGET="AppRTCMobile"
 
 ANDROID_TOOLCHAINS="$WEBRTC_ROOT/src/third_party/android_tools/ndk/toolchains"
 
@@ -81,6 +81,12 @@ pull_depot_tools() {
 # Update/Get the webrtc code base
 pull_webrtc() {
     WORKING_DIR=`pwd`
+    IS_FROM_SCRATCH=false
+
+    if [ ! -d "$WEBRTC_ROOT" ];
+	then
+        IS_FROM_SCRATCH=true
+    fi
 
     # If no directory where webrtc root should be...
     create_directory_if_not_found "$WEBRTC_ROOT"
@@ -103,6 +109,11 @@ pull_webrtc() {
     # Get latest webrtc source
 	echo Pull down the latest from the webrtc repo
 	echo this can take a while
+
+    if [ "$IS_FROM_SCRATCH" = true ] ; then
+        fetch --nohooks webrtc_android
+    fi
+
 	if [ -z $1 ]
     then
         echo "gclient sync with newest"
