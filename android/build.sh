@@ -63,7 +63,7 @@ pull_depot_tools() {
 	    mkdir -p "$DEPOT_TOOLS"
 
 	    echo Pull the depo tools project from chromium source into the depot tools directory
-	    git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git "$DEPOT_TOOLS"
+	    git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git $DEPOT_TOOLS
 
 	else
 		echo Change directory into the depot tools
