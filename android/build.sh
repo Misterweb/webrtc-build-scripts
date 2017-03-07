@@ -81,13 +81,8 @@ pull_depot_tools() {
 # Update/Get the webrtc code base
 pull_webrtc() {
     WORKING_DIR=`pwd`
-    IS_FROM_SCRATCH=false
 
-    if [ ! -d "$WEBRTC_ROOT" ];
-	then
-        IS_FROM_SCRATCH=true
-        echo "Is from scratch"
-    fi
+    fetch --nohooks webrtc_android
 
     # If no directory where webrtc root should be...
     create_directory_if_not_found "$WEBRTC_ROOT"
@@ -110,8 +105,6 @@ pull_webrtc() {
     # Get latest webrtc source
 	echo Pull down the latest from the webrtc repo
 	echo this can take a while
-
-     fetch --nohooks webrtc_android
 
 	if [ -z $1 ]
     then
