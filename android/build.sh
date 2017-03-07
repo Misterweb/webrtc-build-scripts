@@ -86,6 +86,7 @@ pull_webrtc() {
     if [ ! -d "$WEBRTC_ROOT" ];
 	then
         IS_FROM_SCRATCH=true
+        echo "Is from scratch"
     fi
 
     # If no directory where webrtc root should be...
@@ -111,6 +112,7 @@ pull_webrtc() {
 	echo this can take a while
 
     if [ "$IS_FROM_SCRATCH" = true ] ; then
+        echo "Fetching WebRTC android repository"
         fetch --nohooks webrtc_android
     fi
 
