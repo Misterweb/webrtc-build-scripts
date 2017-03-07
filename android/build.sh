@@ -111,10 +111,7 @@ pull_webrtc() {
 	echo Pull down the latest from the webrtc repo
 	echo this can take a while
 
-    if [ "$IS_FROM_SCRATCH" = true ] ; then
-        echo "Fetching WebRTC android repository"
-        fetch --nohooks webrtc_android
-    fi
+     fetch --nohooks webrtc_android
 
 	if [ -z $1 ]
     then
