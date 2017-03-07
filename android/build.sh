@@ -86,7 +86,7 @@ pull_webrtc() {
     create_directory_if_not_found "$WEBRTC_ROOT"
     cd "$WEBRTC_ROOT"
 
-    if [ ! -d "src"]; then 
+    if [ ! -d "src" ]; then 
         echo "Fetching webrtc android sources"
         fetch --nohooks webrtc_android
     fi
