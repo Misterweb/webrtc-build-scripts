@@ -31,7 +31,7 @@ DEPOT_TOOLS="$PROJECT_ROOT/depot_tools"
 WEBRTC_ROOT="$PROJECT_ROOT/webrtc"
 create_directory_if_not_found "$WEBRTC_ROOT"
 BUILD="$WEBRTC_ROOT/libjingle_peerconnection_builds"
-WEBRTC_TARGET="AppRTCMobile"
+#WEBRTC_TARGET="AppRTCMobile"
 
 ANDROID_TOOLCHAINS="$WEBRTC_ROOT/src/third_party/android_tools/ndk/toolchains"
 
